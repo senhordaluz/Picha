@@ -1,8 +1,27 @@
 version: '2.4'
-services:  
+services:
+  # Banco
+  database:
+    container_name: picha-bd
+    restart: unless-stopped
+    image: postgres:11-alpine
+    ports:
+    - '2254:5432'
+    expose:
+      - '5432'
+    volumes:
+      - /data/postgres
+    logging:
+      driver: json-file
+    environment:
+      POSTGRES_DB: picha
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
   # Picha
   picha:
     container_name: picha-backend
+    restart: unless-stopped
     build:
       context: ./
       target: DEV
@@ -12,16 +31,23 @@ services:
       - ./:/usr/src/picha
     depends_on:
       - redis
+      - database
     environment:
       TZ: America/Bahia
-      POSTGRES_PASSWORD: postgres
+      DATABASE_DRIVE: django.db.backends.postgresql_psycopg2
+      DATABASE_HOST: database
+      DATABASE_PORT: 5432
+      DATABASE_NAME: picha
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
       BROKER_URL: 'redis://redis:6379'
       CELERY_RESULT_BACKEND: 'redis://redis:6379'
       CELERY_TIMEZONE: 'America/Bahia'
-    command: "/bin/bash -c \"celery -A picha worker -l info & \n celery -A picha beat -l info & \n python manage.py runserver 0.0.0.0:8000 \""
+    command: "/bin/sh -c \"celery -A picha worker -l info & \n celery -A picha beat -l info & \n python manage.py runserver 0.0.0.0:8000 \""
 
   redis:
     container_name: picha-redis
+    restart: unless-stopped
     image: redis:3.2-alpine
     environment:
       TZ: America/Bahia

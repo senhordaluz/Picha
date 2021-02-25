@@ -1,1 +1,1 @@
-docker-compose exec picha bash -c "python manage.py migrate"
+docker-compose exec picha sh -c "python manage.py migrate"
