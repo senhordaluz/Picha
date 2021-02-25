@@ -112,12 +112,16 @@ STATIC_ROOT = '/static/'
 STATIC_URL = '/static/'
 
 # CELERY
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+BROKER_URL = os.environ['BROKER_URL']
+CELERY_RESULT_BACKEND = os.environ['CELERY_RESULT_BACKEND']
+CELERY_TIMEZONE = os.environ['CELERY_TIMEZONE']
+
+# BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
+# CELERY_TIMEZONE = 'Africa/Nairobi'
 
 # Emails
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
