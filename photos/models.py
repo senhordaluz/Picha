@@ -10,6 +10,7 @@ class Photo(models.Model):
     image_url = models.URLField(
         "Image URL", max_length=255, help_text="The URL to the image file itself")
     description = models.TextField("Description")
+    published = models.DateTimeField("Published on", auto_now=True)
 
     class Meta:
         verbose_name = "Photo"
