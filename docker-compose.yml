@@ -10,7 +10,7 @@ services:
     expose:
       - "5432"
     volumes:
-      - ./data/postgres:/data/postgres
+      - postgres_data:/var/lib/postgresql/data
     logging:
       driver: json-file
     environment:
@@ -29,7 +29,7 @@ services:
     expose:
       - "6379"
     volumes:
-      - ./data/redis:/data
+      - redis_data:/data
 
   # Picha
   picha:
@@ -57,3 +57,21 @@ services:
       CELERY_RESULT_BACKEND: "redis://redis:6379"
       CELERY_TIMEZONE: "America/Bahia"
     command: "/bin/sh -c \"celery -A picha worker -l info & \n celery -A picha beat -l info & \n python manage.py runserver 0.0.0.0:8000 \""
+
+  frontend:
+    container_name: picha-frontend
+    build:
+      context: ./frontend
+    ports:
+      - '2201:8080'
+    command:
+      - yarn
+      - run
+      - serve:docker
+    volumes:
+      - ./manager-obras/resources/frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+  redis_data:
