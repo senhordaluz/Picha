@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     # custom apps
     'feedback',
     'photos',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
