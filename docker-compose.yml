@@ -1,4 +1,4 @@
-version: '2.4'
+version: "2.4"
 services:
   # Banco
   database:
@@ -6,17 +6,30 @@ services:
     restart: unless-stopped
     image: postgres:11-alpine
     ports:
-    - '2254:5432'
+      - "2254:5432"
     expose:
-      - '5432'
+      - "5432"
     volumes:
-      - postgres_data:/data/postgres
+      - postgres_data:/var/lib/postgresql/data
     logging:
       driver: json-file
     environment:
+      TZ: America/Bahia
       POSTGRES_DB: picha
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
+  # Redis
+  redis:
+    container_name: picha-redis
+    restart: unless-stopped
+    image: redis:3.2-alpine
+    environment:
+      TZ: America/Bahia
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
 
   # Picha
   picha:
@@ -26,7 +39,7 @@ services:
       context: ./
       target: DEV
     ports:
-      - '2200:8000'
+      - "2200:8000"
     volumes:
       - ./:/usr/src/picha
     depends_on:
@@ -40,22 +53,28 @@ services:
       DATABASE_NAME: picha
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
-      BROKER_URL: 'redis://redis:6379'
-      CELERY_RESULT_BACKEND: 'redis://redis:6379'
-      CELERY_TIMEZONE: 'America/Bahia'
+      BROKER_URL: "redis://redis:6379"
+      CELERY_RESULT_BACKEND: "redis://redis:6379"
+      CELERY_TIMEZONE: "America/Bahia"
     command: "/bin/sh -c \"celery -A picha worker -l info & \n celery -A picha beat -l info & \n python manage.py runserver 0.0.0.0:8000 \""
 
-  redis:
-    container_name: picha-redis
-    restart: unless-stopped
-    image: redis:3.2-alpine
-    environment:
-      TZ: America/Bahia
-    expose:
-      - '6379'
+  frontend:
+    container_name: picha-frontend
+    build:
+      context: ./frontend
+    ports:
+      - '2201:8080'
+    depends_on:
+      - picha
+    command:
+      - yarn
+      - run
+      - serve:docker
     volumes:
-      - redis_data:/data
+      - ./frontend:/app
+      - node_modules:/app/node_modules
 
 volumes:
   postgres_data:
   redis_data:
+  node_modules:
