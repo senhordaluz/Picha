@@ -79,16 +79,16 @@ export default class FeedbackModal extends Vue {
     this.$emit("change", value);
   }
 
-  @Ref("form") vForm: Vue;
+  @Ref("form") vForm!: Vue;
 
   action: string = process.env.VUE_APP_FEEDBACKFORM_URL || "/feedback/";
 
   rules = {
     email: [
-      (v) => !!v || (this as any).$t("rules.email.required"),
-      (v) => /.+@.+/.test(v) || (this as any).$t("rules.email.valid"),
+      (v:any) => !!v || (this as any).$t("rules.email.required"),
+      (v:any) => /.+@.+/.test(v) || (this as any).$t("rules.email.valid"),
     ],
-    message: [(v) => !!v || (this as any).$t("rules.message.required")],
+    message: [(v:any) => !!v || (this as any).$t("rules.message.required")],
   };
 
   email = "";

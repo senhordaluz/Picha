@@ -80,8 +80,8 @@ export default class PhotoList extends Vue {
   urlParams = new URLSearchParams(window.location.search);
 
   page =
-    this.urlParams.has("page") && !isNaN(parseInt(this.urlParams.get("page")))
-      ? parseInt(this.urlParams.get("page"))
+    this.urlParams.has("page") && !isNaN(parseInt(this.urlParams.get("page") as string))
+      ? parseInt(this.urlParams.get("page") as string)
       : 1;
   loading = false;
   loaded = false;
