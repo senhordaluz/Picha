@@ -39,8 +39,8 @@ const drawer = LocalStorage.getItem("menu-drawer");
 
 @Component({
   components: {
-    FeedbackModal,
-  },
+    FeedbackModal
+  }
 })
 export default class App extends Vue {
   title: string = process.env.VUE_APP_TITLE || "Picha!";

@@ -27,8 +27,8 @@ import Modal from "./Modal.vue";
 
 @Component({
   components: {
-    Modal,
-  },
+    Modal
+  }
 })
 export default class FeedbackModal extends Vue {
   @Model("change", { type: Boolean }) readonly value!: boolean;
