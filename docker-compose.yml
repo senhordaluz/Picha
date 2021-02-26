@@ -45,7 +45,6 @@ services:
     depends_on:
       - redis
       - database
-      - frontend
     environment:
       TZ: America/Bahia
       DATABASE_DRIVE: django.db.backends.postgresql_psycopg2
@@ -65,6 +64,8 @@ services:
       context: ./frontend
     ports:
       - '2201:8080'
+    depends_on:
+      - picha
     command:
       - yarn
       - run
