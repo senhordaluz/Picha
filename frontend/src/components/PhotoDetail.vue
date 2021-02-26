@@ -1,7 +1,18 @@
 <template lang="pug">
-Modal(color="primary", v-model="isOpen", :title="photo.title")
+Modal(color="primary", v-model="isOpen", :title="photo.checkWhiteSpace ? photo.title : $t('no-title')")
   span.text-center.text-body-1(v-html="photo.description")
 </template>
+
+<i18n>
+{
+  "en": {
+    "no-title": "Untitled"
+  },
+  "pt-BR": {
+    "no-title": "Sem título"
+  }
+}
+</i18n>
 
 <script lang="ts">
 import { Vue, Component, Model, Prop } from "vue-property-decorator";

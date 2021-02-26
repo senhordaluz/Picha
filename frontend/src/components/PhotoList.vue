@@ -19,7 +19,9 @@ v-container(v-if="loaded")
                 template(v-slot:placeholder)
                   v-row.fill-height.ma-0(align="center", justify="center")
                     v-progress-circular(indeterminate, color="grey lighten-5")
-              v-card-title.photo-card-title(hover) {{ photo.title }}
+              v-card-title.photo-card-title(v-if="photo.checkWhiteSpace", hover) {{ photo.title }}
+              v-card-title.photo-card-title(v-else, hover) {{ $t('no-title') }}
+              v-card-subtitle.pt-3(v-html="$t('published-on', { date: photo.formatedPublishedDate })")
               v-fade-transition
                 v-overlay(v-if="hover", absolute, color="#036358")
                   v-btn(@click="showPhotoDetailModal(photo)") {{ $t('more-info') }}
@@ -47,10 +49,14 @@ v-container(v-if="loaded")
 <i18n>
 {
   "en": {
-    "more-info": "See more info"
+    "more-info": "See more info",
+    "no-title": "Untitled",
+    "published-on": "Published on: <i>{date}</i>"
   },
   "pt-BR": {
-    "more-info": "Ver mais"
+    "more-info": "Ver mais",
+    "no-title": "Sem título",
+    "published-on": "Publicado em: <i>{date}</i>"
   }
 }
 </i18n>

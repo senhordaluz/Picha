@@ -25,4 +25,19 @@ export default class Photo {
   get image_url_big() {
     return this.image_url.replace("_m.jpg", ".jpg");
   }
+
+  get checkWhiteSpace(): boolean {
+    return this.title.replace(/\s/g, '').length > 0;
+  }
+
+  get formatedPublishedDate(): string {
+    const locale = process.env.VUE_APP_I18N_LOCALE || process.env.VUE_APP_I18N_FALLBACK_LOCALE || "pt-BR";
+    switch (locale) {
+      case "pt-BR":
+        return this.published.locale('pt-BR').format("MMM. D, YYYY [às] h:mm A z");
+      case "en":
+      default:
+        return this.published.locale('en').format("MMM. D, YYYY [at] h:mm A z");
+    }
+  }
 }
