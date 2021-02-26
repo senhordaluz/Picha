@@ -27,7 +27,7 @@ v-dialog(
       slot
     v-card-actions
       slot(name="footer", :close="close")
-        v-btn(color="danger", dark, @click="close") {{ $t('close') }}
+        v-btn(color="grey", dark, @click="close") {{ $t('close') }}
 </template>
 
 <i18n>

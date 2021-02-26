@@ -1,5 +1,10 @@
 <template lang="pug">
 v-container(v-if="loaded")
+  PhotoDetail(
+    v-if="showPhotoDetail",
+    v-model="showPhotoDetail",
+    :photo="photoDetail"
+  )
   v-fade-transition(mode="out-in")
     v-row
       v-col.d-flex.child-flex(cols=4, v-for="photo in photos.all()")
@@ -17,7 +22,7 @@ v-container(v-if="loaded")
               v-card-title.photo-card-title(hover) {{ photo.title }}
               v-fade-transition
                 v-overlay(v-if="hover", absolute, color="#036358")
-                  v-btn {{ $t('more-info') }}
+                  v-btn(@click="showPhotoDetailModal(photo)") {{ $t('more-info') }}
       v-col.text-center
         v-pagination(
           :dark="darkMode",
@@ -53,14 +58,14 @@ v-container(v-if="loaded")
 <script lang="ts">
 import { collect, Collection } from "collect.js";
 import { Component, Vue, InjectReactive, Watch } from "vue-property-decorator";
-import HelloWorld from "../components/HelloWorld.vue"; // @ is an alias to /src
+import PhotoDetail from "../components/PhotoDetail.vue"; // @ is an alias to /src
 
 import { Pagination, Photo } from "../models";
 import { PhotoRepository } from "../repositories";
 
 @Component({
   components: {
-    HelloWorld,
+    PhotoDetail,
   },
 })
 export default class PhotoList extends Vue {
@@ -72,10 +77,17 @@ export default class PhotoList extends Vue {
     this.urlParams.has("page") && !isNaN(parseInt(this.urlParams.get("page")))
       ? parseInt(this.urlParams.get("page"))
       : 1;
+  loading = false;
   loaded = false;
+  showPhotoDetail = false;
   count = 0;
-  //   currentPage?: Pagination<Photo>;
   photos: Collection<Photo> = collect();
+  photoDetail: Photo | null = null;
+
+  showPhotoDetailModal(photo: Photo) {
+    this.photoDetail = photo;
+    this.showPhotoDetail = true;
+  }
 
   get totalPages(): number {
     return Math.floor(this.count / 9);
@@ -90,33 +102,28 @@ export default class PhotoList extends Vue {
    * @param previous Flag de controle para resgatar pagina anterior
    */
   async navigate(demandedPage?: number, previous = true) {
-    try {
-      const page: number =
-        demandedPage || (previous ? this.page - 1 : this.page + 1);
-      const currentPage: Pagination<Photo> = await PhotoRepository.list({
-        page,
-      });
-      console.log(currentPage);
-      this.photos = currentPage.results;
-      this.count = currentPage.count;
-      //   if (this.currentPage) {
-      //     if (previous && this.currentPage?.previous)
-      //       this.currentPage = await PhotoRepository.previous(this.currentPage!);
-      //     else if (this.currentPage?.next)
-      //       this.currentPage = await PhotoRepository.next(this.currentPage!);
-      //   } else if (page) this.currentPage = await PhotoRepository.list({ page });
-      //   else this.currentPage = await PhotoRepository.list();
-      //   this.photos = this.currentPage!.results;
-      this.loaded = true;
-      //   this.$forceUpdate();
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "smooth",
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    if (!this.loading)
+      try {
+        this.loading = true;
+        const page: number =
+          demandedPage || (previous ? this.page - 1 : this.page + 1);
+        const currentPage: Pagination<Photo> = await PhotoRepository.list({
+          page,
+        });
+        console.log(currentPage);
+        this.photos = currentPage.results;
+        this.count = currentPage.count;
+        this.loaded = true;
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
   }
 
   @Watch("page")
