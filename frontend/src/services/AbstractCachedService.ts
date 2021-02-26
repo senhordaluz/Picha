@@ -30,7 +30,7 @@ export default abstract class AbstractCachedService {
     let response: any;
 
     try {
-      if(query) query.format = "json";
+      if (query) query.format = "json";
       else query = { format: "json" };
       response = await client.get(path, { params: query });
       if (response.status >= 200 && response.status < 300) {

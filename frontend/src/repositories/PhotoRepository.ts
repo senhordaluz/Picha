@@ -4,7 +4,6 @@ import { Pagination, Photo } from "@/models";
 import { PhotoService } from "@/services";
 
 export default abstract class PhotoRepository {
-
   /**
    * Resgata uma lista de Imagens
    */
@@ -14,36 +13,42 @@ export default abstract class PhotoRepository {
       value => new Photo(value)
     );
     return {
-        ...response,
-        results,
+      ...response,
+      results
     };
   }
 
   /**
    * Resgata próxima página
    */
-  public static async next(pagination: Pagination<Photo>, params: any = null): Promise<Pagination<Photo>> {
+  public static async next(
+    pagination: Pagination<Photo>,
+    params: any = null
+  ): Promise<Pagination<Photo>> {
     const response = await PhotoService.next(pagination.next!, params);
     const results: Collection<Photo> = collect(response.results).map<Photo>(
       value => new Photo(value)
     );
     return {
-        ...response,
-        results,
+      ...response,
+      results
     };
   }
 
   /**
    * Resgata página anterior
    */
-  public static async previous(pagination: Pagination<Photo>, params: any = null): Promise<Pagination<Photo>> {
+  public static async previous(
+    pagination: Pagination<Photo>,
+    params: any = null
+  ): Promise<Pagination<Photo>> {
     const response = await PhotoService.previous(pagination.previous!, params);
     const results: Collection<Photo> = collect(response.results).map<Photo>(
       value => new Photo(value)
     );
     return {
-        ...response,
-        results,
+      ...response,
+      results
     };
   }
 
