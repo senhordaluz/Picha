@@ -45,6 +45,7 @@ services:
     depends_on:
       - redis
       - database
+      - frontend
     environment:
       TZ: America/Bahia
       DATABASE_DRIVE: django.db.backends.postgresql_psycopg2
@@ -69,9 +70,10 @@ services:
       - run
       - serve:docker
     volumes:
-      - ./manager-obras/resources/frontend:/app
-      - /app/node_modules
+      - ./frontend:/app
+      - node_modules:/app/node_modules
 
 volumes:
   postgres_data:
   redis_data:
+  node_modules:
