@@ -72,6 +72,11 @@ CORS_ALLOW_HEADERS = (
     'Access-Control-Allow-Origin'
 )
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 9
+}
+
 ROOT_URLCONF = 'picha.urls'
 
 TEMPLATES = [

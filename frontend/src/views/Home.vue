@@ -1,14 +1,14 @@
 <template lang="pug">
-  HelloWorld
+  PhotoList
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import PhotoList from "../components/PhotoList.vue";
 
 @Component({
   components: {
-    HelloWorld
+    PhotoList
   }
 })
 export default class Home extends Vue {}
