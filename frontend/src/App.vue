@@ -1,50 +1,76 @@
 <template lang="pug">
-v-app
+v-app(:dark="darkMode")
   v-app-bar(app, color="primary", dark)
-    .d-flex.align-center
-      v-img.shrink.mr-2(
-        alt="Vuetify Logo",
-        contain,
-        src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png",
-        transition="scale-transition",
-        width="40"
-      )
-
-      v-img.shrink.mt-1.hidden-sm-and-down(
-        alt="Vuetify Name",
-        contain,
-        min-width="100",
-        src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png",
-        width="100"
-      )
-
+    v-app-bar-nav-icon(@click="drawer = !drawer")
+    v-toolbar-title {{ title }}
     v-spacer
 
-    v-btn(
-      href="https://github.com/vuetifyjs/vuetify/releases/latest",
-      target="_blank",
-      text
-    )
-      span.mr-2 Latest Release
+    v-btn(@click="showFeedbackmodal = true", text)
+      span.mr-2 {{ $t('feedback') }}
       v-icon mdi-open-in-new
+      FeedbackModal(v-if="showFeedbackmodal", v-model="showFeedbackmodal")
 
-  v-main
+  v-main(:dark="darkMode")
     router-view
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
-
-export default Vue.extend({
-  name: "App",
-
-  components: {
-    HelloWorld,
+<i18n>
+{
+  "pt-BR": {
+    "feedback": "Envie um comentário"
   },
+  "en": {
+    "feedback": "Got Feedback?"
+  }
+}
+</i18n>
 
-  data: () => ({
-    //
-  }),
-});
+<script lang="ts">
+import { Component, Vue, ProvideReactive, Watch } from "vue-property-decorator";
+import FeedbackModal from "./components/FeedbackModal.vue";
+import { LocalStorage } from "./plugins";
+const darkMode: boolean =
+  LocalStorage.getItem("dark-mode") ||
+  window.matchMedia("(prefers-color-scheme: dark)").matches ||
+  false;
+const habilitarDarkMode: boolean =
+  process.env.VUE_APP_DARK_MODE_ON === "true" ? true : false;
+const drawer = LocalStorage.getItem("menu-drawer");
+
+@Component({
+  components: {
+    FeedbackModal,
+  },
+})
+export default class App extends Vue {
+  title: string = process.env.VUE_APP_TITLE || "Picha!";
+  showFeedbackmodal = false;
+  drawer: boolean = typeof drawer !== "undefined" ? drawer : true;
+  @ProvideReactive("darkMode") darkMode: boolean = habilitarDarkMode
+    ? darkMode
+    : false;
+
+  @Watch("darkMode")
+  onDarkModeChanged(value: boolean) {
+    if (value) {
+      this.$root.$el.classList.remove("theme--light");
+      this.$root.$el.classList.add("theme--dark");
+      document.bgColor = "#121212";
+    } else {
+      this.$root.$el.classList.remove("theme--dark");
+      this.$root.$el.classList.add("theme--light");
+      document.bgColor = "";
+    }
+    LocalStorage.setItem("dark-mode", value);
+  }
+
+  @Watch("drawer")
+  onDrawerChanged(value: boolean) {
+    LocalStorage.setItem("menu-drawer", value);
+  }
+
+  mounted() {
+    this.onDarkModeChanged(this.darkMode);
+  }
+}
 </script>

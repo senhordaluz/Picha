@@ -36,10 +36,7 @@ export default class ErrorHandler extends Vue {
   }
 
   get logo(): string {
-    return (
-      (process.env.VUE_APP_BASE_URL || "") +
-      "/images/logo/logo.svg"
-    );
+    return (process.env.VUE_APP_BASE_URL || "") + "/images/logo/logo.svg";
   }
 
   get errorMessage(): string {
